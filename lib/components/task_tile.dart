@@ -22,9 +22,8 @@ class TaskTile extends StatelessWidget {
     required this.delete
   });
 
-  String popupitem1 = "Részletek";
-  String popupitem2 = "Szerkesztés";
-  String popupitem3 = "Törlés";
+  String popupitem1 = "Szerkesztés";
+  String popupitem2 = "Törlés";
 
   @override
   Widget build(BuildContext context) {
@@ -53,9 +52,7 @@ class TaskTile extends StatelessWidget {
 
                   PopupMenuItem(value: popupitem1,child: Text(popupitem1),),
 
-                  PopupMenuItem(value: popupitem2,child: Text(popupitem2),),
-
-                  PopupMenuItem(value: popupitem3, onTap: delete, child: Text(popupitem3)),
+                  PopupMenuItem(value: popupitem2, onTap: delete, child: Text(popupitem2)),
 
 
                 ]

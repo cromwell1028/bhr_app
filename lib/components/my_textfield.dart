@@ -10,7 +10,7 @@ class MyTextField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
       return  Padding(
-        padding: EdgeInsets.only(left: 30, right: 30),
+        padding: const EdgeInsets.only(left: 30, right: 30),
         child: Theme(
           data: ThemeData(
             textSelectionTheme: const TextSelectionThemeData(

@@ -1,7 +1,5 @@
-//import "dart:js";
 import 'dart:convert';
 import 'dart:io';
-//import 'dart:js_util';
 import 'dart:math';
 import "package:bhr_app/components/new_task_box.dart";
 import "package:bhr_app/components/task_tile.dart";
