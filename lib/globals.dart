@@ -1,6 +1,5 @@
 library globals;
 
-String httplink = "http://152.66.180.128:49319";
+String httplink = "https://borohfr.jmrtn.dev";
 
 String token = "";
-
