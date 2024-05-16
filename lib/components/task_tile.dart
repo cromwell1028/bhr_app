@@ -10,6 +10,7 @@ class TaskTile extends StatelessWidget {
   final String date;
   Function(bool?)? onChanged;
   Function() delete;
+  Function() modify;
 
   TaskTile(
   {
@@ -19,7 +20,8 @@ class TaskTile extends StatelessWidget {
     required this.completed,
     required this.onChanged,
     required this.date,
-    required this.delete
+    required this.delete,
+    required this.modify
   });
 
   String popupitem1 = "Szerkesztés";
@@ -50,7 +52,7 @@ class TaskTile extends StatelessWidget {
 
                   itemBuilder: (context) => [
 
-                  PopupMenuItem(value: popupitem1,child: Text(popupitem1),),
+                  PopupMenuItem(value: popupitem1, onTap: modify, child: Text(popupitem1),),
 
                   PopupMenuItem(value: popupitem2, onTap: delete, child: Text(popupitem2)),
 

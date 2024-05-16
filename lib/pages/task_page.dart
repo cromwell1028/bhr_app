@@ -1,10 +1,9 @@
 import 'dart:convert';
-import 'dart:io';
-import 'dart:math';
 import "package:bhr_app/components/new_task_box.dart";
 import "package:bhr_app/components/task_tile.dart";
 import 'package:bhr_app/pages/chat_page.dart';
 import "package:flutter/material.dart";
+import 'package:flutter/widgets.dart';
 import 'package:http/http.dart' as http;
 import 'package:bhr_app/globals.dart' as globals;
 
@@ -36,7 +35,7 @@ class _TaskPageState extends State<TaskPage> {
       headers: {"Content-Type": "application/json", "Authorization": globals.token})
       .then((value) => {setState(() {
         tasks = jsonDecode(value.body).cast<Map<String, dynamic>>();
-        tiletasks = tasks.where((element) => element["done"] == false).toList();
+        tiletasks = tasks.where((element) => element["done"] == keszon).toList();
       }),}
       );
   }
@@ -92,9 +91,21 @@ class _TaskPageState extends State<TaskPage> {
     Navigator.of(context).pop();
   }
 
-  void save()
+  void save(Map<String?, dynamic>? s, int index)
   {
-    http.post(Uri.parse(globals.httplink+'/api/tasks/create?title='+tasknamecontroller.text+'&description='+descriptioncontroller.text+'&deadline='+datecontroller.text+"T"+timecontroller.text.split(':')[0]+"%3A"+timecontroller.text.split(':')[1]+'&groupId='+actualGroup["id"]),headers: {"Content-Type": "application/json", "Authorization": globals.token} )
+    http.post(Uri.parse(globals.httplink+'/api/tasks/create?title='+tasknamecontroller.text+'&description='+descriptioncontroller.text+'&deadline='+datecontroller.text+"T"+timecontroller.text.split(':')[0]+"%3A"+timecontroller.text.split(':')[1]+'&groupId='+s!["id"]),headers: {"Content-Type": "application/json", "Authorization": globals.token} )
+      .then((value) => {setState(() {
+        fetchTasks();
+        resettext();
+        Navigator.of(context).pop();
+      }),
+      }
+    );
+  }
+
+  void savemodify(Map<String?, dynamic>? s, int index)
+  {
+    http.post(Uri.parse(globals.httplink+'/api/tasks/'+tiletasks[index]["id"].toString()+'/modify?title='+tasknamecontroller.text+'&description='+descriptioncontroller.text+'&deadline='+datecontroller.text+"T"+timecontroller.text.split(':')[0]+"%3A"+timecontroller.text.split(':')[1]+'&groupId='+s!["id"]),headers: {"Content-Type": "application/json", "Authorization": globals.token} )
       .then((value) => {setState(() {
         fetchTasks();
         resettext();
@@ -114,13 +125,31 @@ class _TaskPageState extends State<TaskPage> {
     });
   }
 
-  void createTask()
+  void modifyTask(int index)
   {
+    actualGroup = groups.firstWhere((element) => element["id"] ==  tiletasks[index]["groupId"]);
+    tasknamecontroller.text = tiletasks[index]["title"];
+    descriptioncontroller.text = tiletasks[index]["description"];
+    datecontroller.text = tiletasks[index]["deadline"].split('T')[0];
+    timecontroller.text = tiletasks[index]["deadline"].split('T')[1];
     showDialog(
       context: context, 
       builder: (context)
       {
-        return NewTaskBox(tasknamecontroller: tasknamecontroller, descriptioncontroller: descriptioncontroller, datecontroller: datecontroller, timecontroller: timecontroller, oncancel: cancel, onsave: save, selecteditem: actualGroup, dropdownitems: groups);
+       return NewTaskBox(idx: index,nev: "Feladat szerkesztése", gombnev: "Szerkesztés",tasknamecontroller: tasknamecontroller, descriptioncontroller: descriptioncontroller, datecontroller: datecontroller, timecontroller: timecontroller, oncancel: cancel, onsave: savemodify, selecteditem: actualGroup, dropdownitems: groups);
+      }
+    );
+  }
+
+  void createTask()
+  {
+    actualGroup = groups[0];
+    resettext();
+    showDialog(
+      context: context, 
+      builder: (context)
+      {
+        return NewTaskBox(idx: 0, nev: "Feladat létrehozása", gombnev: "Hozzáadás",tasknamecontroller: tasknamecontroller, descriptioncontroller: descriptioncontroller, datecontroller: datecontroller, timecontroller: timecontroller, oncancel: cancel, onsave: save, selecteditem: actualGroup, dropdownitems: groups);
       }
     );
   }
@@ -243,13 +272,12 @@ class _TaskPageState extends State<TaskPage> {
               itemBuilder:(context, index) {
                   return index == tiletasks.length ?
                   const SizedBox(height: 80) :
-                  TaskTile(date: tiletasks[index]["deadline"].split('T')[0],completed: tiletasks[index]["done"], taskname: tiletasks[index]["title"], description: tiletasks[index]["description"], onChanged: (value) => CheckedIn(value, index), delete: () => deleteTask(index));
+                  TaskTile(date: tiletasks[index]["deadline"].split('T')[0],completed: tiletasks[index]["done"], taskname: tiletasks[index]["title"], description: tiletasks[index]["description"], onChanged: (value) => CheckedIn(value, index), delete: () => deleteTask(index), modify:()=> modifyTask(index),);
               }
             ),
           )
         ],
       ),
-      
     );
   }
 }

@@ -1,6 +1,4 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:bhr_app/globals.dart' as globals;
 
 class MyTextField extends StatelessWidget {
   final bool pw;
